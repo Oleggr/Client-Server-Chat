@@ -9,11 +9,22 @@ import os
 from datetime import datetime
 
 
-def app_create():
-    app = flask.Flask(__name__)
-    return app
+app = flask.Flask(__name__)
+
+
+@app.route('/', methods=['GET'])
+def def_method():
+    return 'Hello world!'
+
+
+@app.route('/test', methods=['GET'])
+def test_method():
+    '''
+    Test method for checking GET request handling.
+    '''
+    token = request.args["token"]
+    return token + 'aaaa'
 
 
 if __name__ == "__main__":
-    app = app_create()
     app.run(host='0.0.0.0', debug = True, port = 8080)
