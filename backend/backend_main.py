@@ -1,12 +1,15 @@
 import flask
 from flask import request
-from flask import send_file
 from flask import jsonify
-from flask_mail import Mail
-from flask_mail import Message
+# from flask import send_file
+# from flask_mail import Mail
+# from flask_mail import Message
 
 import os
 from datetime import datetime
+
+from security import user_valid
+from db_interact import db_initialization
 
 
 app = flask.Flask(__name__)
@@ -23,7 +26,34 @@ def test_method():
     Test method for checking GET request handling.
     '''
     token = request.args["token"]
-    return token + 'aaaa'
+    return 'Your token was: {}'.format(token)
+
+
+@app.route('/database/init', methods=['POST'])
+def db_init():
+    '''
+    DB initiation method
+    '''
+    return db_initialization()
+
+
+# Message connected methods
+
+@app.route('/message/send', methods=['POST'])
+def send_message():
+    return 'Send message method'
+
+
+@app.route('/message/receive', methods=['GET'])
+def receive_messages():
+    return 'Receieve message method'
+
+
+# User connected methods
+
+@app.route('/user/login', methods=['GET'])
+def user_login():
+    return 'User login method'
 
 
 if __name__ == "__main__":
