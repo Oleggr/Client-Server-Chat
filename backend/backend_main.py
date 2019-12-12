@@ -13,6 +13,14 @@ from classes import Message
 from security import user_valid
 
 
+'''
+TODO:
+
+    Change names to nicknames.
+    Add other classes (User, Chat, Room, etc.)
+    Implement methods (Delete message, create user, login user, etc.) 
+'''
+
 app = flask.Flask(__name__)
 db_connection = 'not loaded'
 
@@ -51,8 +59,14 @@ def db_get_all_messages():
     '''
     Get all messages. DB test method.
     '''
-    res = db_i.select_all_messages(db_connection)
+    res = db_i.select_all_messages()
     return jsonify(res)
+
+
+@app.route('/database/drop', methods=['POST'])
+def drop_all_messages():
+    res = db_i.drop_all_messages()
+    return res
 
 
 # Message connected methods
@@ -62,10 +76,13 @@ def send_message():
 
     data = request.args
 
-    if not ('sender' in data) or ('receiver' in data) or ('text' in data):
+    if not (('sender' in data) and ('receiver' in data) and ('text' in data)):
         return 'Message not correct. Try again.'
 
-    message = Message(data['sender'], data['receiver'], data['text'])
+    now = datetime.now()
+    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+
+    message = Message(data['sender'], data['receiver'], data['text'], dt_string)
     response = db_i.send_message(message)
 
     return jsonify(response)

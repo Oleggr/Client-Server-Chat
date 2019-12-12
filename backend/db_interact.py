@@ -24,9 +24,22 @@ def db_initialization():
 
 def send_message(message):
 
-    return {'sender': message.sender,
+    sqliteConnection = sqlite3.connect('sqlite.db')
+
+    cursor = sqliteConnection.cursor()
+    cursor.execute(message.set_message_sql_query, (message.sender, message.receiver, message.text, message.created_at))
+
+    sqliteConnection.commit()
+
+    cursor.close()
+    sqliteConnection.close()
+
+    reply = {'sender': message.sender,
             'receiver': message.receiver,
-            'text': message.text}
+            'text': message.text,
+            'created_at': message.created_at}
+
+    return reply
 
 
 def select_all_messages():
@@ -35,7 +48,7 @@ def select_all_messages():
         sqliteConnection = sqlite3.connect('sqlite.db')
 
         cur = sqliteConnection.cursor()
-        cur.execute("SELECT * FROM messages")
+        cur.execute(db_q.select_all_messages)
      
         rows = cur.fetchall()
         res = []
@@ -49,6 +62,25 @@ def select_all_messages():
 
     except Exception as e:
         return "Error while getting messages {}".format(e)
+
+
+def drop_all_messages():
+
+    try:
+        sqliteConnection = sqlite3.connect('sqlite.db')
+
+        cursor = sqliteConnection.cursor()
+        cursor.execute(db_q.delete_all_messages)
+     
+        sqliteConnection.commit()
+
+        cursor.close()
+        sqliteConnection.close()
+
+        return 'All messages was deleted'
+
+    except Exception as e:
+        return "Error while deleting messages {}".format(e)
 
 
 def db_test_data_load():
