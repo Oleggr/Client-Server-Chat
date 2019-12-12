@@ -1,32 +1,55 @@
 import sqlite3
 
+import db_queries as db_q
+
+
 def db_initialization():
 
     try:
-        sqliteConnection = sqlite3.connect('SQLite_Python.db')
-        sqlite_create_table_query = '''CREATE TABLE messages (
-                                    id INTEGER PRIMARY KEY,
-                                    sender INTEGER NOT NULL,
-                                    receiver INTEGER NOT NULL,
-                                    message TEXT NOT NULL,
-                                    joining_date datetime);'''
-
+        sqliteConnection = sqlite3.connect('sqlite.db')
+        
         cursor = sqliteConnection.cursor()
-        print("Successfully Connected to SQLite")
-
-        cursor.execute(sqlite_create_table_query)
-
+        cursor.execute(db_q.sqlite_create_table_query)
+        
         sqliteConnection.commit()
-        print("SQLite table created")
 
         cursor.close()
+        sqliteConnection.close()
 
-        return "OK"
+        return 'OK'
 
     except sqlite3.Error as error:
-        return "Error while connecting to sqlite {}".format(error)
-        
-    finally:
-        if (sqliteConnection):
-            sqliteConnection.close()
-            return "The SQLite connection is closed"
+        return 'Error while connecting to sqlite {}'.format(error)
+
+
+def send_message(message):
+
+    return {'sender': message.sender,
+            'receiver': message.receiver,
+            'text': message.text}
+
+
+def select_all_messages():
+
+    try:
+        sqliteConnection = sqlite3.connect('sqlite.db')
+
+        cur = sqliteConnection.cursor()
+        cur.execute("SELECT * FROM messages")
+     
+        rows = cur.fetchall()
+        res = []
+     
+        for row in rows:
+            res.append(row)
+
+        sqliteConnection.close()
+
+        return res
+
+    except Exception as e:
+        return "Error while getting messages {}".format(e)
+
+
+def db_test_data_load():
+    pass
