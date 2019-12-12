@@ -8,8 +8,13 @@ class Message():
         self.text = text
         self.created_at = created_at
 
-    # sender = ''
-    # receiver = ''
-    # text = ''
 
+class User():
+
+    set_user_sql_query = 'INSERT INTO users (nickname, password_hash, created_at) VALUES (?, ?, ?)'
+
+    def __init__(self, nickname, password_hash, created_at):
+        self.nickname = sender
+        self.password_hash = password_hash
+        self.created_at = created_at
     

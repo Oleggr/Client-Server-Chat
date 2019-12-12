@@ -9,7 +9,9 @@ def db_initialization():
         sqliteConnection = sqlite3.connect('sqlite.db')
         
         cursor = sqliteConnection.cursor()
-        cursor.execute(db_q.sqlite_create_table_query)
+        cursor.execute(db_q.sqlite_create_messages_table_query)
+        cursor.execute(db_q.sqlite_create_users_table_query)
+
         
         sqliteConnection.commit()
 
@@ -81,6 +83,28 @@ def drop_all_messages():
 
     except Exception as e:
         return "Error while deleting messages {}".format(e)
+
+
+def select_all_users():
+
+    try:
+        sqliteConnection = sqlite3.connect('sqlite.db')
+
+        cur = sqliteConnection.cursor()
+        cur.execute(db_q.select_all_users)
+     
+        rows = cur.fetchall()
+        res = []
+     
+        for row in rows:
+            res.append(row)
+
+        sqliteConnection.close()
+
+        return res
+
+    except Exception as e:
+        return "Error while getting users {}".format(e)
 
 
 def db_test_data_load():

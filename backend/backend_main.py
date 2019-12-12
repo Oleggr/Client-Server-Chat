@@ -63,7 +63,7 @@ def db_get_all_messages():
     return jsonify(res)
 
 
-@app.route('/database/drop', methods=['POST'])
+@app.route('/database/drop/messages', methods=['POST'])
 def drop_all_messages():
     res = db_i.drop_all_messages()
     return res
@@ -99,6 +99,19 @@ def receive_messages():
 def user_login():
     return 'User login method'
 
+
+@app.route('/user/register', methods=['GET'])
+def user_login():
+    return 'User login method'
+
+
+@app.route('/users', methods=['GET'])
+def db_get_all_users():
+    '''
+    Get all messages. DB test method.
+    '''
+    res = db_i.select_all_users()
+    return jsonify(res)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug = True, port = 8080)
