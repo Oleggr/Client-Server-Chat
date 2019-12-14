@@ -20,6 +20,8 @@ TODO:
     Change names to nicknames.
     Add other classes (User, Chat, Room, etc.)
     Implement methods (Delete message, create user, login user, etc.) 
+
+    Add logger
 '''
 
 app = flask.Flask(__name__)
