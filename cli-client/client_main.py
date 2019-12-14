@@ -1,8 +1,15 @@
 import requests 
 import os
+import sys
 
 from astropy.table import Table
   
+
+'''
+TODO:
+    Add logger
+'''
+
 
 url = 'http://127.0.0.1:8080'
 
@@ -13,23 +20,52 @@ url = 'http://127.0.0.1:8080'
 # print(r.text)
 
 
-def print_menu():
+def print_menu(username, update=''):
 
-    menu = '''Hello, user!
+    menu = '''Hello, {}!
 Pick an option:
 
 1: Start chat
-2: Users
-3: Exit
-'''
+2: My chats
+3: Users
+9: Exit
+
+Press enter to refresh page.
+{}
+'''.format(username, update)
 
     print(menu)
 
 
 def user_login():
-    params = {'token': 'bbb'} 
-    r = requests.get(url = url + '/user/login', params = params) 
-    data = r.json()
+
+    username = input('username: ')
+    password = input('password: ')
+
+    params = {
+            'username': username,
+            'password': password
+            } 
+
+    r = requests.post(url = url + '/user/login', params = params) 
+
+    if r.text == 'token':
+        return username
+
+    elif r.text == 'Incorrect data.':
+        return False
+
+    else:
+        return 'Unexpected exception'
+
+
+def receive_messages():
+
+    r = requests.get(url = url + '/message/receive')
+
+    # TODO: implement this method
+
+    return 'You have new message from {}'.format('oleggr')
 
 
 def get_users():
@@ -46,36 +82,65 @@ def get_users_table(users):
     for elem in users:
         t.add_row((elem[0], elem[1], elem[2]))
 
+    return t
+
+
+def get_chats_table(chats):
+    t = Table(names=('username1', 'username2', 'created at', 'is group chat'), dtype=('i4', 'S', 'S', 'S'))
+
+    for elem in chats:
+        t.add_row((elem[0], elem[1], elem[2], elem[3]))
+
+    return t
+
 
 if __name__ == '__main__':
 
+    os.system('cls')
+    username = user_login()
+
+    if username == False:
+        print('Data incorrect. Try again.')
+        sys.exit()
+
+    elif username == 'Unexpected exception':
+        print(username)
+        sys.exit()
+
+
     while True:
 
-        os.system('cls')
-        username = user_login()
-
-        os.system('cls')
-        print_menu()
-
-        command = input()
-
-        if command == '1':
             os.system('cls')
+            updates = receive_messages()
+            print_menu(username, updates)
 
-            print('Select user to chat with:')
+            command = input()
 
-            t = get_users_table(get_users())
-            print(t)
+            if command == '1':
+                os.system('cls')
 
-            user_id = input('User id: ')
+                print('Select user to chat with:')
 
-        elif command == '2':
-            os.system('cls')
-            t = get_users_table(get_users())
-            print(t)
-            input()
+                t = get_users_table(get_users())
+                print(t)
 
-        elif command == '3':
-            print('Goodbye)')
-            break
+                receiver_name = input('username: ')
 
+                start_chat(receiver_name)
+
+            elif command == '2':
+                os.system('cls')
+                chats = get_my_chats(username)
+                t = get_chats_table(chats)
+                print(t)
+                input()
+
+            elif command == '3':
+                os.system('cls')
+                t = get_users_table(get_users())
+                print(t)
+                input()
+
+            elif command == '9':
+                print('Goodbye)')
+                break
