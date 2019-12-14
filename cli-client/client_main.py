@@ -8,6 +8,7 @@ import admin_functions as af
 '''
 TODO:
     Add logger
+    Implement receive_messages method
 '''
 
 # r = requests.get(url = url + path, params = params) 
@@ -22,6 +23,7 @@ if __name__ == '__main__':
 
     if choise == '1':
 
+        # Login
         os.system('cls')
         response = uf.user_login()
 
@@ -33,8 +35,8 @@ if __name__ == '__main__':
 
     elif choise == '2':
 
+        # Register and login after it
         os.system('cls')
-
         response = uf.user_register()
         print(response)
 
@@ -42,7 +44,6 @@ if __name__ == '__main__':
             sys.exit()
 
         os.system('cls')
-
         response = uf.user_login()
 
         if response == False:
@@ -65,8 +66,9 @@ if __name__ == '__main__':
 
 
         if command == '1':
-            os.system('cls')
 
+            # Start chat
+            os.system('cls')
             print('Select user to chat with:')
 
             t = uf.get_users_table(uf.get_users())
@@ -78,6 +80,8 @@ if __name__ == '__main__':
 
 
         elif command == '2':
+
+            # Show my chats
             os.system('cls')
             chats = uf.get_my_chats(username)
             t = uf.get_chats_table(chats)
@@ -86,6 +90,8 @@ if __name__ == '__main__':
 
 
         elif command == '3':
+
+            # Show users
             os.system('cls')
             t = uf.get_users_table(uf.get_users())
             print(t)
