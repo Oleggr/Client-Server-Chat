@@ -64,7 +64,7 @@ def user_login():
 
     r = requests.post(url = url + '/user/login', params = params) 
 
-    if r.text == 'Incorrect data.':
+    if ' ' in r.text:
         return False
 
     return username, r.text

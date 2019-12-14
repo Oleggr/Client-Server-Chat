@@ -23,12 +23,13 @@ if __name__ == '__main__':
     if choise == '1':
 
         os.system('cls')
+        response = uf.user_login()
 
-        username, user_id = uf.user_login()
-
-        if username == False:
+        if response == False:
             print('Data incorrect. Try again.')
             sys.exit()
+
+        username, user_id = response[0], response[1]
 
     elif choise == '2':
 
@@ -37,11 +38,18 @@ if __name__ == '__main__':
         response = uf.user_register()
         print(response)
 
-        username, user_id = uf.user_login()
+        if response == 'User exist. Try another username.':
+            sys.exit()
 
-        if username == False:
+        os.system('cls')
+
+        response = uf.user_login()
+
+        if response == False:
             print('Data incorrect. Try again.')
             sys.exit()
+
+        username, user_id = response[0], response[1]
 
     else:
         sys.exit()
@@ -98,12 +106,15 @@ if __name__ == '__main__':
                     af.print_admin_menu()
                     admin_command = input()
 
-                    if admin_command not in '123456':
+                    if admin_command in '123456':
+                        res = af.main_admin(admin_command)
+                        print(res)
+                        input()
+
+                    else:
                         print('Bye')
                         input()
                         break
-                    else:
-                        main_admin(admin_command)
                 
             else:
                 print('Incindent will be reported.')

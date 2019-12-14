@@ -158,12 +158,11 @@ def user_login(username, password_hash):
         cursor.execute('SELECT username FROM users WHERE username=\'{}\' and password_hash=\'{}\''.format(username, password_hash))
 
         rows = cursor.fetchall()
+        print(rows)
 
         sqliteConnection.commit()
 
-        
-
-        if len(rows):
+        if len(rows) > 0:
 
             cursor.execute('SELECT id FROM users WHERE username=\'{}\' and password_hash=\'{}\''.format(username, password_hash))
             user_id = cursor.fetchall()
@@ -172,6 +171,7 @@ def user_login(username, password_hash):
             sqliteConnection.close()
 
             return str(user_id[0][0])
+
         else:
             cursor.close()
             sqliteConnection.close()

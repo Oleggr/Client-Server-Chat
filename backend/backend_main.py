@@ -125,7 +125,8 @@ def user_login():
     password_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), b'salt', 100000)
 
     response = db_i.user_login(data['username'], password_hash.hex())
-
+    print(response)
+    print('***')
     return response
 
 
