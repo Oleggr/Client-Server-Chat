@@ -107,6 +107,9 @@ def user_create(user):
     try:
         sqliteConnection = sqlite3.connect(db_filename)
 
+        if user_exist(user.username):
+            return 'User exist. Try another username.'
+
         cursor = sqliteConnection.cursor()
         cursor.execute(user.set_user_sql_query, (user.username, user.password_hash, user.created_at))
 
@@ -121,7 +124,54 @@ def user_create(user):
         return reply
 
     except Exception as e:
-        return "Error while sending message {}".format(e)
+        return "Error while creating user {}".format(e)
+
+
+def user_login(username, password_hash):
+
+    try:
+        sqliteConnection = sqlite3.connect(db_filename)
+
+        cursor = sqliteConnection.cursor()
+        cursor.execute('SELECT username FROM users WHERE username=\'{}\' and password_hash=\'{}\''.format(username, password_hash))
+
+        rows = cursor.fetchall()
+
+        sqliteConnection.commit()
+
+        cursor.close()
+        sqliteConnection.close()
+
+        if len(rows):
+            return 'token'
+        else:
+            return 'Incorrect data.'
+
+    except Exception as e:
+        return "Error while login user {}".format(e)
+
+
+def user_exist(username):
+    try:
+        sqliteConnection = sqlite3.connect(db_filename)
+
+        cursor = sqliteConnection.cursor()
+        cursor.execute('SELECT username FROM users WHERE username=\'{}\''.format(username))
+
+        rows = cursor.fetchall()
+
+        sqliteConnection.commit()
+
+        cursor.close()
+        sqliteConnection.close()
+
+        if len(rows) != 0:
+            return True
+        else:
+            return False
+
+    except Exception as e:
+        return "Error while checking username {}".format(e)
 
 
 def select_all_users():

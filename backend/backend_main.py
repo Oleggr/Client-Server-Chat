@@ -105,7 +105,18 @@ def receive_messages():
 
 @app.route('/user/login', methods=['POST'])
 def user_login():
-    return 'User login method'
+
+    data = request.args
+    
+    if not (('username' in data) and ('password' in data)):
+        return 'User data is not correct. Try again.'
+
+    password = data['password']
+    password_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), b'salt', 100000)
+
+    response = db_i.user_login(data['username'], password_hash.hex())
+
+    return response
 
 
 @app.route('/user/register', methods=['POST'])
