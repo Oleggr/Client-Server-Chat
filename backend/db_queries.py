@@ -3,7 +3,8 @@ sqlite_create_messages_table_query = '''CREATE TABLE messages (
                                 sender INTEGER NOT NULL,
                                 receiver INTEGER NOT NULL,
                                 message TEXT NOT NULL,
-                                created_at datetime NOT NULL);'''
+                                created_at datetime NOT NULL,
+                                is_checked BOOLEAN NOT NULL);'''
 
 select_all_messages = 'SELECT * FROM messages'
 delete_all_messages = 'DELETE FROM messages;'

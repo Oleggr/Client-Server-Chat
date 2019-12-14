@@ -100,6 +100,14 @@ def send_message():
 
 @app.route('/message/receive', methods=['GET'])
 def receive_messages():
+
+    data = request.args
+
+    if not ('username' in data):
+        return 'Requset not correct. Try again.'
+
+    response = db_i.receive_messages(data['username'])
+
     return 'Receieve message method'
 
 
@@ -138,7 +146,10 @@ def user_register():
     user = User(data['username'], password_hash.hex(), dt_string)
     response = db_i.user_create(user)
 
-    return jsonify(response)
+    if response == 'User exist. Try another username.':
+        return response
+    else:
+        return jsonify(response)
 
 
 @app.route('/users', methods=['GET'])

@@ -7,6 +7,7 @@ class Message():
         self.receiver = receiver
         self.text = text
         self.created_at = created_at
+        self.is_checked = False
 
 
 class User():

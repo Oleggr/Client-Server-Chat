@@ -19,6 +19,10 @@ Anykey to exit admin mode
     print(menu)
 
 
+def main_admin(command):
+    pass
+
+
 def db_init():
     pass
 

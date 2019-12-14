@@ -96,7 +96,14 @@ if __name__ == '__main__':
                 while True:
                     os.system('cls')
                     af.print_admin_menu()
-                    command = input()
+                    admin_command = input()
+
+                    if admin_command not in '123456':
+                        print('Bye')
+                        input()
+                        break
+                    else:
+                        main_admin(admin_command)
                 
             else:
                 print('Incindent will be reported.')

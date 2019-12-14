@@ -61,6 +61,28 @@ def send_message(message):
         return "Error while sending message {}".format(e)
 
 
+def receive_messages(username):
+
+    try:
+        sqliteConnection = sqlite3.connect(db_filename)
+
+        cur = sqliteConnection.cursor()
+        cur.execute('SELECT * FROM messages WHERE receiver=\'{}\' and is_checked=\'{}\''.format(username, False))
+     
+        rows = cur.fetchall()
+        res = []
+     
+        for row in rows:
+            res.append(row)
+
+        sqliteConnection.close()
+
+        return res
+
+    except Exception as e:
+        return "Error while getting messages {}".format(e)
+
+
 def select_all_messages():
 
     try:
@@ -139,13 +161,22 @@ def user_login(username, password_hash):
 
         sqliteConnection.commit()
 
-        cursor.close()
-        sqliteConnection.close()
+        
 
         if len(rows):
-            return 'token'
+
+            cursor.execute('SELECT id FROM users WHERE username=\'{}\' and password_hash=\'{}\''.format(username, password_hash))
+            user_id = cursor.fetchall()
+
+            cursor.close()
+            sqliteConnection.close()
+
+            return str(user_id[0][0])
         else:
+            cursor.close()
+            sqliteConnection.close()
             return 'Incorrect data.'
+
 
     except Exception as e:
         return "Error while login user {}".format(e)
