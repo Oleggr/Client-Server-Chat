@@ -1,8 +1,8 @@
-import requests 
 import os
 import sys
 
-from astropy.table import Table
+import user_functions as uf
+import admin_functions as af
   
 
 '''
@@ -10,137 +10,100 @@ TODO:
     Add logger
 '''
 
-
-url = 'http://127.0.0.1:8080'
-
 # r = requests.get(url = url + path, params = params) 
-  
 # # data = r.json() 
-
 # print(r.text)
-
-
-def print_menu(username, update=''):
-
-    menu = '''Hello, {}!
-Pick an option:
-
-1: Start chat
-2: My chats
-3: Users
-9: Exit
-
-Press enter to refresh page.
-{}
-'''.format(username, update)
-
-    print(menu)
-
-
-def user_login():
-
-    username = input('username: ')
-    password = input('password: ')
-
-    params = {
-            'username': username,
-            'password': password
-            } 
-
-    r = requests.post(url = url + '/user/login', params = params) 
-
-    if r.text == 'token':
-        return username
-
-    elif r.text == 'Incorrect data.':
-        return False
-
-    else:
-        return 'Unexpected exception'
-
-
-def receive_messages():
-
-    r = requests.get(url = url + '/message/receive')
-
-    # TODO: implement this method
-
-    return 'You have new message from {}'.format('oleggr')
-
-
-def get_users():
-
-    r = requests.get(url = url + '/users') 
-    data = r.json()
-
-    return data
-
-
-def get_users_table(users):
-    t = Table(names=('id', 'username', 'created at'), dtype=('i4', 'S', 'S'))
-
-    for elem in users:
-        t.add_row((elem[0], elem[1], elem[2]))
-
-    return t
-
-
-def get_chats_table(chats):
-    t = Table(names=('username1', 'username2', 'created at', 'is group chat'), dtype=('i4', 'S', 'S', 'S'))
-
-    for elem in chats:
-        t.add_row((elem[0], elem[1], elem[2], elem[3]))
-
-    return t
-
 
 if __name__ == '__main__':
 
     os.system('cls')
-    username = user_login()
+    uf.hello_screen()
+    choise = input()
 
-    if username == False:
-        print('Data incorrect. Try again.')
-        sys.exit()
+    if choise == '1':
 
-    elif username == 'Unexpected exception':
-        print(username)
+        os.system('cls')
+
+        username, user_id = uf.user_login()
+
+        if username == False:
+            print('Data incorrect. Try again.')
+            sys.exit()
+
+    elif choise == '2':
+
+        os.system('cls')
+
+        response = uf.user_register()
+        print(response)
+
+        username, user_id = uf.user_login()
+
+        if username == False:
+            print('Data incorrect. Try again.')
+            sys.exit()
+
+    else:
         sys.exit()
 
 
     while True:
 
+        os.system('cls')
+        updates = uf.receive_messages(username)
+        uf.print_menu(username, updates)
+
+        command = input()
+
+
+        if command == '1':
             os.system('cls')
-            updates = receive_messages()
-            print_menu(username, updates)
 
-            command = input()
+            print('Select user to chat with:')
 
-            if command == '1':
-                os.system('cls')
+            t = uf.get_users_table(uf.get_users())
+            print(t)
 
-                print('Select user to chat with:')
+            receiver_name = input('username: ')
 
-                t = get_users_table(get_users())
-                print(t)
+            uf.start_chat(sender, receiver_name)
 
-                receiver_name = input('username: ')
 
-                start_chat(receiver_name)
+        elif command == '2':
+            os.system('cls')
+            chats = uf.get_my_chats(username)
+            t = uf.get_chats_table(chats)
+            print(t)
+            input()
 
-            elif command == '2':
-                os.system('cls')
-                chats = get_my_chats(username)
-                t = get_chats_table(chats)
-                print(t)
+
+        elif command == '3':
+            os.system('cls')
+            t = uf.get_users_table(uf.get_users())
+            print(t)
+            input()
+
+
+        elif command == '8':
+            os.system('cls')
+
+            print('Login page\n')
+            username = input('username: ')
+            password = input('password: ')
+
+            if username == 'oleggr' and password == '1235':
+
+                while True:
+                    os.system('cls')
+                    af.print_admin_menu()
+                    command = input()
+                
+            else:
+                print('Incindent will be reported.')
                 input()
+                sys.exit()
+                
 
-            elif command == '3':
-                os.system('cls')
-                t = get_users_table(get_users())
-                print(t)
-                input()
-
-            elif command == '9':
-                print('Goodbye)')
-                break
+        elif command == '9':
+            print('Goodbye)')
+            break
