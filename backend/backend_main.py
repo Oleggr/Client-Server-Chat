@@ -9,7 +9,7 @@ import os
 from datetime import datetime
 
 import db_interact as db_i
-from classes import Message
+from classes import Message, User, Chat
 from security import user_valid
 
 
@@ -56,10 +56,18 @@ def db_init():
 @app.route('/database/messages', methods=['GET'])
 def db_get_all_messages():
     '''
-    Get all messages. DB test method.
+    Get all messages. 
+    DB test method.
+    Will be deleted in final version.
     '''
     res = db_i.select_all_messages()
     return jsonify(res)
+
+
+@app.route('/database/drop', methods=['POST'])
+def drop_db():
+    res = db_i.db_drop()
+    return res
 
 
 @app.route('/database/drop/messages', methods=['POST'])
@@ -79,7 +87,7 @@ def send_message():
         return 'Message not correct. Try again.'
 
     now = datetime.now()
-    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+    dt_string = now.strftime("%d-%m-%Y %H:%M:%S")
 
     message = Message(data['sender'], data['receiver'], data['text'], dt_string)
     response = db_i.send_message(message)
@@ -100,14 +108,20 @@ def user_login():
 
 
 @app.route('/user/register', methods=['GET'])
-def user_login():
+def user_register():
 
     data = request.args
     
-    if not (('username' in data) and ('password_hash' in data) and ('created_at' in data)):
+    if not (('username' in data) and ('password_hash' in data)):
         return 'User data is not correct. Try again.'
 
-    return 'User register method'
+    now = datetime.now()
+    dt_string = now.strftime("%d-%m-%Y %H:%M:%S")
+
+    user = User(data['username'], data['password_hash'], dt_string)
+    response = db_i.user_create(user)
+
+    return jsonify(response)
 
 
 @app.route('/users', methods=['GET'])

@@ -1,12 +1,15 @@
+import os
 import sqlite3
-
 import db_queries as db_q
+
+
+db_filename = 'sqlite.db'
 
 
 def db_initialization():
 
     try:
-        sqliteConnection = sqlite3.connect('sqlite.db')
+        sqliteConnection = sqlite3.connect(db_filename)
         
         cursor = sqliteConnection.cursor()
         cursor.execute(db_q.sqlite_create_messages_table_query)
@@ -21,33 +24,47 @@ def db_initialization():
         return 'OK'
 
     except sqlite3.Error as error:
-        return 'Error while connecting to sqlite {}'.format(error)
+        return 'Error while connecting to database {}'.format(error)
+
+
+def db_drop():
+
+    try:
+        os.remove(db_filename)
+        return 'DB was deleted'
+
+    except Exception as e:
+        return "Error while deleting db {}".format(e)
 
 
 def send_message(message):
 
-    sqliteConnection = sqlite3.connect('sqlite.db')
+    try:
+        sqliteConnection = sqlite3.connect(db_filename)
 
-    cursor = sqliteConnection.cursor()
-    cursor.execute(message.set_message_sql_query, (message.sender, message.receiver, message.text, message.created_at))
+        cursor = sqliteConnection.cursor()
+        cursor.execute(message.set_message_sql_query, (message.sender, message.receiver, message.text, message.created_at))
 
-    sqliteConnection.commit()
+        sqliteConnection.commit()
 
-    cursor.close()
-    sqliteConnection.close()
+        cursor.close()
+        sqliteConnection.close()
 
-    reply = {'sender': message.sender,
-            'receiver': message.receiver,
-            'text': message.text,
-            'created_at': message.created_at}
+        reply = {'sender': message.sender,
+                'receiver': message.receiver,
+                'text': message.text,
+                'created_at': message.created_at}
 
-    return reply
+        return reply
+
+    except Exception as e:
+        return "Error while sending message {}".format(e)
 
 
 def select_all_messages():
 
     try:
-        sqliteConnection = sqlite3.connect('sqlite.db')
+        sqliteConnection = sqlite3.connect(db_filename)
 
         cur = sqliteConnection.cursor()
         cur.execute(db_q.select_all_messages)
@@ -69,7 +86,7 @@ def select_all_messages():
 def drop_all_messages():
 
     try:
-        sqliteConnection = sqlite3.connect('sqlite.db')
+        sqliteConnection = sqlite3.connect(db_filename)
 
         cursor = sqliteConnection.cursor()
         cursor.execute(db_q.delete_all_messages)
@@ -85,10 +102,32 @@ def drop_all_messages():
         return "Error while deleting messages {}".format(e)
 
 
+def user_create():
+
+    try:
+        sqliteConnection = sqlite3.connect(db_filename)
+
+        cursor = sqliteConnection.cursor()
+        cursor.execute(user.set_user_sql_query, (user.username, user.password_hash, user.created_at))
+
+        sqliteConnection.commit()
+
+        cursor.close()
+        sqliteConnection.close()
+
+        reply = {'username': user.username,
+                'created_at': user.created_at}
+
+        return reply
+
+    except Exception as e:
+        return "Error while sending message {}".format(e)
+
+
 def select_all_users():
 
     try:
-        sqliteConnection = sqlite3.connect('sqlite.db')
+        sqliteConnection = sqlite3.connect(db_filename)
 
         cur = sqliteConnection.cursor()
         cur.execute(db_q.select_all_users)
