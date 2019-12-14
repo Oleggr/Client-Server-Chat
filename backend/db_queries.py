@@ -21,6 +21,6 @@ sqlite_create_chats_table_query = '''CREATE TABLE chats (
 select_all_messages = 'SELECT * FROM messages'
 delete_all_messages = 'DELETE FROM messages;'
 
-select_all_users = 'SELECT * FROM users'
+select_all_users = 'SELECT id, username, created_at FROM users;'
 
 select_all_chats = 'SELECT * FROM chats'

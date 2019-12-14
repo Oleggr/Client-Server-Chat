@@ -102,7 +102,7 @@ def drop_all_messages():
         return "Error while deleting messages {}".format(e)
 
 
-def user_create():
+def user_create(user):
 
     try:
         sqliteConnection = sqlite3.connect(db_filename)

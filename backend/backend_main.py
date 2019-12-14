@@ -6,6 +6,7 @@ from flask import jsonify
 # from flask_mail import Message
 
 import os
+import hashlib
 from datetime import datetime
 
 import db_interact as db_i
@@ -102,23 +103,26 @@ def receive_messages():
 
 # User connected methods
 
-@app.route('/user/login', methods=['GET'])
+@app.route('/user/login', methods=['POST'])
 def user_login():
     return 'User login method'
 
 
-@app.route('/user/register', methods=['GET'])
+@app.route('/user/register', methods=['POST'])
 def user_register():
 
     data = request.args
     
-    if not (('username' in data) and ('password_hash' in data)):
+    if not (('username' in data) and ('password' in data)):
         return 'User data is not correct. Try again.'
 
     now = datetime.now()
     dt_string = now.strftime("%d-%m-%Y %H:%M:%S")
 
-    user = User(data['username'], data['password_hash'], dt_string)
+    password = data['password']
+    password_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), b'salt', 100000)
+
+    user = User(data['username'], password_hash.hex(), dt_string)
     response = db_i.user_create(user)
 
     return jsonify(response)
