@@ -11,8 +11,8 @@ def db_initialization():
         cursor = sqliteConnection.cursor()
         cursor.execute(db_q.sqlite_create_messages_table_query)
         cursor.execute(db_q.sqlite_create_users_table_query)
+        cursor.execute(db_q.sqlite_create_chats_table_query)
 
-        
         sqliteConnection.commit()
 
         cursor.close()

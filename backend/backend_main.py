@@ -22,7 +22,6 @@ TODO:
 '''
 
 app = flask.Flask(__name__)
-db_connection = 'not loaded'
 
 
 @app.route('/', methods=['GET'])
@@ -102,16 +101,23 @@ def user_login():
 
 @app.route('/user/register', methods=['GET'])
 def user_login():
-    return 'User login method'
+
+    data = request.args
+    
+    if not (('username' in data) and ('password_hash' in data) and ('created_at' in data)):
+        return 'User data is not correct. Try again.'
+
+    return 'User register method'
 
 
 @app.route('/users', methods=['GET'])
-def db_get_all_users():
+def get_all_users():
     '''
     Get all messages. DB test method.
     '''
     res = db_i.select_all_users()
     return jsonify(res)
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug = True, port = 8080)
