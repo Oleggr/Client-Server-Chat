@@ -27,3 +27,12 @@ sqlite_create_chats_table_query = '''CREATE TABLE chats (
                                 is_group BOOLEAN NOT NULL);'''
 
 select_all_chats = 'SELECT * FROM chats'
+
+
+sqlite_create_general_chat_table_query = '''CREATE TABLE general_chat (
+                                id INTEGER PRIMARY KEY,
+                                sender TEXT NOT NULL,
+                                message TEXT NOT NULL,
+                                created_at datetime NOT NULL);'''
+
+select_all_messages_in_general_chat = 'SELECT * FROM general_chat'

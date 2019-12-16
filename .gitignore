@@ -2,3 +2,6 @@ venv/
 */__pycache__/
 backend/tmp.py
 sqlite.db
+cli-client/libraries_test/
+server.py
+client.py

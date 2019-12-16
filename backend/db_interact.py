@@ -15,7 +15,8 @@ def db_initialization():
         cursor.execute(db_q.sqlite_create_messages_table_query)
         cursor.execute(db_q.sqlite_create_users_table_query)
         cursor.execute(db_q.sqlite_create_chats_table_query)
-
+        cursor.execute(db_q.sqlite_create_general_chat_table_query)
+        
         sqliteConnection.commit()
 
         cursor.close()
@@ -43,7 +44,7 @@ def send_message(message):
         sqliteConnection = sqlite3.connect(db_filename)
 
         cursor = sqliteConnection.cursor()
-        cursor.execute(message.set_message_sql_query, (message.sender, message.receiver, message.text, message.created_at))
+        cursor.execute(message.set_message_sql_query, (message.sender, message.receiver, message.text, message.created_at, message.is_checked))
 
         sqliteConnection.commit()
 
@@ -67,7 +68,7 @@ def receive_messages(username):
         sqliteConnection = sqlite3.connect(db_filename)
 
         cur = sqliteConnection.cursor()
-        cur.execute('SELECT * FROM messages WHERE receiver=\'{}\' and is_checked=\'{}\''.format(username, False))
+        cur.execute('SELECT * FROM messages WHERE receiver=\'{}\' and is_checked=\'{}\''.format(username, 0))
      
         rows = cur.fetchall()
         res = []
@@ -75,12 +76,42 @@ def receive_messages(username):
         for row in rows:
             res.append(row)
 
+        cur.close()
         sqliteConnection.close()
 
         return res
 
     except Exception as e:
         return "Error while getting messages {}".format(e)
+
+
+def check_messages(username):
+
+    try:
+        sqliteConnection = sqlite3.connect(db_filename)
+
+        cur = sqliteConnection.cursor()
+        cur.execute('SELECT * FROM messages WHERE receiver=\'{}\' and is_checked=\'{}\''.format(username, 0))
+     
+        rows = cur.fetchall()
+        res = []
+     
+        for row in rows:
+            res.append(row)
+
+        cur.execute('''UPDATE messages
+                    SET is_checked = 1
+                    WHERE receiver=\'{}\' and is_checked=\'{}\''''.format(username, 0))
+
+        sqliteConnection.commit()
+
+        cur.close()
+        sqliteConnection.close()
+
+        return res
+
+    except Exception as e:
+        return "Error while checking messages {}".format(e)
 
 
 def select_all_messages():
@@ -97,6 +128,7 @@ def select_all_messages():
         for row in rows:
             res.append(row)
 
+        cur.close()
         sqliteConnection.close()
 
         return res

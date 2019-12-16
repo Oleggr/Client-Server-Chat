@@ -1,13 +1,14 @@
 class Message():
 
-    set_message_sql_query = 'INSERT INTO messages (sender, receiver, message, created_at) VALUES (?, ?, ?, ?)'
+    set_message_sql_query = 'INSERT INTO messages (sender, receiver, message, created_at, is_checked) VALUES (?, ?, ?, ?, ?)'
 
     def __init__(self, sender, receiver, text, created_at):
         self.sender = sender
         self.receiver = receiver
         self.text = text
         self.created_at = created_at
-        self.is_checked = False
+        self.is_checked = 0
+        # self.chat_id = chat_id
 
 
 class User():
@@ -22,11 +23,10 @@ class User():
 
 class Chat():
 
-    create_chat_sql_query = 'INSERT INTO chats (username1, username2, created_at, is_group) VALUES (?, ?, ?, ?)'
+    create_chat_sql_query = 'INSERT INTO chats (username1, username2, created_at) VALUES (?, ?, ?)'
 
-    def __init__(self, username1, username2, created_at, is_group):
+    def __init__(self, username1, username2, created_at):
         self.username1 = username1
         self.username2 = username2
         self.created_at = created_at
-        self.is_group = is_group
     

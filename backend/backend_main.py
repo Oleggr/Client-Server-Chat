@@ -98,7 +98,7 @@ def send_message():
     return jsonify(response)
 
 
-@app.route('/message/receive', methods=['GET'])
+@app.route('/messages/receive', methods=['GET'])
 def receive_messages():
 
     data = request.args
@@ -108,7 +108,53 @@ def receive_messages():
 
     response = db_i.receive_messages(data['username'])
 
-    return 'Receieve message method'
+    return jsonify(response)
+
+
+@app.route('/messages/check', methods=['GET'])
+def check_messages():
+
+    data = request.args
+
+    if not ('username' in data):
+        return 'Requset not correct. Try again.'
+
+    response = db_i.check_messages(data['username'])
+
+    return jsonify(response)
+
+
+# Chat connected methods
+
+@app.route('/chat/create', methods=['POST'])
+def chat_create():
+
+    data = request.args
+
+    if not (('username1' in data) and ('username2' in data)):
+        return 'Requset not correct. Try again.'
+
+    # response = db_i.receive_messages(data['username'])
+
+    # return 'Receieve message method'
+
+
+@app.route('/chat/general/message/send', methods=['POST'])
+def general_chat_message_send():
+    '''
+    Available for all users who is online.
+    '''
+
+    pass
+
+
+@app.route('/chat/general/message/receive', methods=['GET'])
+def general_chat_message_receive():
+    '''
+    Available for all users who is online.
+    '''
+
+    pass
 
 
 # User connected methods

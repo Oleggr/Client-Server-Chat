@@ -19,9 +19,12 @@ def print_menu(username, update=''):
     menu = '''Hello, {}!
 Pick an option:
 
-1: Start chat
-2: My chats
-3: Users
+0: Send message
+1: Check received messages
+
+5: Start chat
+6: My chats
+7: Users
 
 8: Become admin
 9: Exit
@@ -70,15 +73,77 @@ def user_login():
     return username, r.text
 
 
+def message_input(message=''):
+
+    print(message)
+
+    lines = []
+
+    while True:
+
+        line = input()
+
+        if line:
+            lines.append(line)
+        else:
+            break
+
+    text = '\n'.join(lines)
+
+    return text
+
+
+def send_message(sender, receiver, message):
+
+    params = {
+            'sender': sender,
+            'receiver': receiver,
+            'text': message
+    }
+
+    r = requests.post(url = url + '/message/send', params = params)
+
+    return r.text
+
+
 def receive_messages(username):
 
     params = {'username': username}
 
-    r = requests.get(url = url + '/message/receive', params = params)
+    r = requests.get(url = url + '/messages/receive', params = params)
 
-    # TODO: implement this method
+    messages = r.json()
+    senders = []
 
-    return '* You have new message from {}'.format('oleggr')
+    for message in messages:
+        sender = message[1]
+        senders.append(sender)
+
+    if len(senders) == 0:
+        return ''
+    elif len(senders) == 1:
+        return '* You have new message from {}'.format(senders[0])
+    else:
+        return '* You have new messages from {} and {} more'.format(senders[0], len(senders) - 1)
+
+
+def sortDate(val):
+    return val[4]
+
+
+def check_messages(username):
+
+    params = {'username': username}
+
+    r = requests.get(url = url + '/messages/check', params = params)
+
+    messages = r.json()
+    data = []
+
+    messages.sort(key = sortDate)
+
+    for message in messages:
+        print(message[1] + '> ' + message[3])
 
 
 def get_users():

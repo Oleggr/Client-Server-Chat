@@ -65,7 +65,47 @@ if __name__ == '__main__':
         command = input()
 
 
+        if command == '0':
+
+            os.system('cls')
+            t = uf.get_users_table(uf.get_users())
+            print(t)
+
+            print('--------')
+            receiver = input('send to: ')
+            message = uf.message_input('message:\n--------')
+            message = message.encode('utf-8')
+
+            response = uf.send_message(username, receiver, message)
+            print(response)
+            input()
+
+
         if command == '1':
+
+            os.system('cls')
+            uf.check_messages(username)
+            input()
+
+
+        if command == '2':
+
+            os.system('cls')
+            while True:
+
+            message = input('{username}> ')
+
+            if message:
+
+                message = message.encode('utf-8')
+                uf.general_chat_message_send(username, message)
+
+            try:
+
+                uf.general_chat_message_receive(username, message)
+
+
+        if command == '5':
 
             # Start chat
             os.system('cls')
@@ -79,7 +119,7 @@ if __name__ == '__main__':
             uf.start_chat(sender, receiver_name)
 
 
-        elif command == '2':
+        elif command == '6':
 
             # Show my chats
             os.system('cls')
@@ -89,7 +129,7 @@ if __name__ == '__main__':
             input()
 
 
-        elif command == '3':
+        elif command == '7':
 
             # Show users
             os.system('cls')
